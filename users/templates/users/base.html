@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Anti-Stress Clicker{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-content">
+            <a class="logo" href="{% url 'home' %}">Anti-Stress Clicker</a>
+            <nav class="main-nav">
+                <a href="{% url 'home' %}">Головна</a>
+                <a href="{% url 'profile' %}">Особистий кабінет</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>Anti-Stress Clicker — навчальний проєкт</p>
+        </div>
+    </footer>
+</body>
+</html>
