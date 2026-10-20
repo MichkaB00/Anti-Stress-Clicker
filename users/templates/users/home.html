@@ -1,0 +1,14 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Головна — Anti-Stress Clicker{% endblock %}
+
+{% block content %}
+<section class="hero card">
+    <h1>Anti-Stress Clicker</h1>
+    <p>
+        Простий настільний клікер для зниження напруги.
+        Перейдіть до особистого кабінету, щоб переглянути свій профіль і демо-статистику.
+    </p>
+    <a class="button" href="{% url 'profile' %}">Особистий кабінет</a>
+</section>
+{% endblock %}
