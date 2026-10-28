@@ -9,7 +9,7 @@ def home(request):
     return render(request, "users/home.html")
 
 
-def admin(request: HttpRequest):
+def customer_details(request: HttpRequest):
     users_data: list[Customer] = [
         Customer(
             full_name="Bertha King",
@@ -62,9 +62,9 @@ def admin(request: HttpRequest):
         ),
     ]
     context: dict = {
-        "users": users_data,
+        "users_data": users_data,
     }
-    return render(request, "users/admin.html", context)
+    return render(request, "users/customer_list.html", context)
 
 
 def profile(request):
