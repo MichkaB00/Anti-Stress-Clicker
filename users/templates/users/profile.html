@@ -1,0 +1,65 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Особистий кабінет — Anti-Stress Clicker{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1>Особистий кабінет</h1>
+    <p>Інформація про користувача та демонстраційна статистика активності.</p>
+</section>
+
+<section class="card">
+    <h2>Інформація про користувача</h2>
+    <ul class="info-list">
+        <li><span>Ім'я користувача:</span> {{ user_info.full_name }}</li>
+        <li><span>Обліковий запис:</span> {{ user_info.username }}</li>
+        <li><span>Дата реєстрації:</span> {{ user_info.date_joined }}</li>
+    </ul>
+</section>
+
+<section class="card">
+    <h2>Моя статистика</h2>
+    <div class="stats-grid">
+        <div class="stat-item">
+            <p class="stat-value">{{ statistics.total_clicks }}</p>
+            <p class="stat-label">Загальна кількість натискань</p>
+        </div>
+        <div class="stat-item">
+            <p class="stat-value">{{ statistics.completed_sessions }}</p>
+            <p class="stat-label">Кількість завершених сесій</p>
+        </div>
+        <div class="stat-item">
+            <p class="stat-value">{{ statistics.average_clicks_per_session }}</p>
+            <p class="stat-label">Середня кількість натискань за сесію</p>
+        </div>
+        <div class="stat-item">
+            <p class="stat-value">{{ statistics.last_activity }}</p>
+            <p class="stat-label">Дата останньої активності</p>
+        </div>
+    </div>
+</section>
+
+<section class="card">
+    <h2>Історія активності</h2>
+    <div class="table-wrapper">
+        <table class="activity-table">
+            <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Кількість натискань</th>
+                    <th>Тривалість</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in activity_history %}
+                <tr>
+                    <td>{{ session.date }}</td>
+                    <td>{{ session.clicks }}</td>
+                    <td>{{ session.duration }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
