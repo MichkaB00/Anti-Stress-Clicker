@@ -1,0 +1,26 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Вхід — Anti-Stress Clicker{% endblock %}
+
+{% block content %}
+<section class="card auth-card">
+    <h1>Вхід</h1>
+    <form class="auth-form" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}
+                    <p class="form-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <p class="form-error">{{ error }}</p>
+        {% endfor %}
+        <button class="button" type="submit">Увійти</button>
+    </form>
+    <p class="form-note">Немає облікового запису? <a href="{% url 'register' %}">Зареєструватися</a></p>
+</section>
+{% endblock %}

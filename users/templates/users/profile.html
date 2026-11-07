@@ -5,14 +5,15 @@
 {% block content %}
 <section class="page-header">
     <h1>Особистий кабінет</h1>
-    <p>Інформація про користувача та демонстраційна статистика активності.</p>
+    <p>Інформація про користувача та статистика активності.</p>
 </section>
 
 <section class="card">
     <h2>Інформація про користувача</h2>
     <ul class="info-list">
-        <li><span>Ім'я користувача:</span> {{ user_info.full_name }}</li>
-        <li><span>Обліковий запис:</span> {{ user_info.username }}</li>
+        <li><span>Ім'я:</span> {{ user_info.first_name }}</li>
+        <li><span>Прізвище:</span> {{ user_info.last_name }}</li>
+        <li><span>Логін:</span> {{ user_info.username }}</li>
         <li><span>Дата реєстрації:</span> {{ user_info.date_joined }}</li>
     </ul>
 </section>
@@ -45,7 +46,7 @@
         <table class="activity-table">
             <thead>
                 <tr>
-                    <th>Дата</th>
+                    <th>Дата і час</th>
                     <th>Кількість натискань</th>
                     <th>Тривалість</th>
                 </tr>
@@ -56,6 +57,10 @@
                     <td>{{ session.date }}</td>
                     <td>{{ session.clicks }}</td>
                     <td>{{ session.duration }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">Статистика ще відсутня.</td>
                 </tr>
                 {% endfor %}
             </tbody>

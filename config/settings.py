@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -81,3 +82,13 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "profile"
+
+MONGODB_URI = os.environ.get("MONGODB_URI", "mongodb://127.0.0.1:27017")
+MONGODB_DB_NAME = os.environ.get("MONGODB_DB_NAME", "antistress")
+MONGODB_SESSIONS_COLLECTION = os.environ.get(
+    "MONGODB_SESSIONS_COLLECTION",
+    "click_sessions",
+)
