@@ -7,8 +7,16 @@
     <h1>Anti-Stress Clicker</h1>
     <p>
         Простий настільний клікер для зниження напруги.
-        Перейдіть до особистого кабінету, щоб переглянути свій профіль і демо-статистику.
+        {% if user.is_authenticated %}
+            Перейдіть до особистого кабінету, щоб переглянути свій профіль і статистику.
+        {% else %}
+            Увійдіть, щоб відкрити особистий кабінет.
+        {% endif %}
     </p>
-    <a class="button" href="{% url 'profile' %}">Особистий кабінет</a>
+    {% if user.is_authenticated %}
+        <a class="button" href="{% url 'profile' %}">Особистий кабінет</a>
+    {% else %}
+        <a class="button" href="{% url 'login' %}">Увійти</a>
+    {% endif %}
 </section>
 {% endblock %}

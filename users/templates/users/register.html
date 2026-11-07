@@ -1,0 +1,29 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Реєстрація — Anti-Stress Clicker{% endblock %}
+
+{% block content %}
+<section class="card auth-card">
+    <h1>Реєстрація</h1>
+    <form class="auth-form" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <div class="helptext">{{ field.help_text }}</div>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="form-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <p class="form-error">{{ error }}</p>
+        {% endfor %}
+        <button class="button" type="submit">Зареєструватися</button>
+    </form>
+    <p class="form-note">Вже є обліковий запис? <a href="{% url 'login' %}">Увійти</a></p>
+</section>
+{% endblock %}

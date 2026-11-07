@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Anti-Stress Clicker{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2">
 </head>
 <body>
     <header class="site-header">
@@ -14,7 +14,17 @@
             <nav class="main-nav">
                 <a href="{% url 'home' %}">Головна</a>
                 <a href="{% url 'customers' %}">Моніторинг клієнтів</a>
-                <a href="{% url 'profile' %}">Особистий кабінет</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'profile' %}">Особистий кабінет</a>
+                    <a href="{% url 'edit_profile' %}">Редагувати профіль</a>
+                    <form class="nav-logout" method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit">Вийти</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">Увійти</a>
+                    <a href="{% url 'register' %}">Зареєструватися</a>
+                {% endif %}
             </nav>
         </div>
     </header>
