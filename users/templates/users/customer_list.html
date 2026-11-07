@@ -1,0 +1,46 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Моніторинг клієнтів — Anti-Stress Clicker{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1>Моніторинг клієнтів</h1>
+    <p>Дані про всіх користувачів в одному місці.</p>
+</section>
+
+<section class="card">
+    <h2>Дані користувачів</h2>
+    <div class="table-wrapper">
+        <table class="activity-table">
+            <thead>
+                <tr>
+                    <th>Ім’я</th>
+                    <th>Рівень стресу</th>
+                    <th>Загальна кількість натискань</th>
+                    <th>Середня швидкість натискань</th>
+                    <th>Останній час активності</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users_data %}
+                <tr>
+                    <td>{{ user.full_name }}</td>
+                    <td>
+                        {% if user.stress_level == "LOW" %}
+                            Низький
+                        {% elif user.stress_level == "MEDIUM" %}
+                            Середній
+                        {% elif user.stress_level == "HIGH" %}
+                            Високий
+                        {% endif %}
+                    </td>
+                    <td>{{ user.total_clicks }}</td>
+                    <td>{{ user.average_clicking_speed }}</td>
+                    <td>{{ user.last_activity }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
