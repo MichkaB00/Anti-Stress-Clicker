@@ -1,8 +1,15 @@
-from django.http import HttpRequest
-from django.shortcuts import render
-
-from .models import Customer, StressLevel
 from datetime import datetime
+
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.http import HttpRequest
+from django.shortcuts import redirect, render
+from django.utils import timezone
+from django.views.decorators.http import require_POST
+
+from .forms import LoginForm, ProfileForm, RegisterForm
+from .models import Customer, StressLevel
+from .mongo import get_user_sessions
 
 
 def home(request):
@@ -67,31 +74,105 @@ def customer_details(request: HttpRequest):
     return render(request, "users/customer_list.html", context)
 
 
+def register(request):
+    if request.user.is_authenticated:
+        return redirect("profile")
+
+    form = RegisterForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        user = form.save()
+        login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+        return redirect("profile")
+
+    return render(request, "users/register.html", {"form": form})
+
+
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect("profile")
+
+    form = LoginForm(request, data=request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        login(request, form.get_user())
+        return redirect("profile")
+
+    return render(request, "users/login.html", {"form": form})
+
+
+@require_POST
+def logout_view(request):
+    logout(request)
+    return redirect("login")
+
+
+@login_required
 def profile(request):
+    user = request.user
+    sessions = get_user_sessions(user.id)
     user_info = {
-        "full_name": "Олена Коваленко",
-        "username": "olena.kovalenko",
-        "date_joined": "12.09.2025",
+        "first_name": user.first_name or "—",
+        "last_name": user.last_name or "—",
+        "username": user.username,
+        "date_joined": timezone.localtime(user.date_joined).strftime("%d.%m.%Y"),
     }
-
-    statistics = {
-        "total_clicks": 1840,
-        "completed_sessions": 24,
-        "average_clicks_per_session": 77,
-        "last_activity": "18.03.2026",
-    }
-
-    activity_history = [
-        {"date": "18.03.2026", "clicks": 92, "duration": "12 хв"},
-        {"date": "15.03.2026", "clicks": 65, "duration": "8 хв"},
-        {"date": "12.03.2026", "clicks": 110, "duration": "15 хв"},
-        {"date": "09.03.2026", "clicks": 48, "duration": "6 хв"},
-        {"date": "05.03.2026", "clicks": 81, "duration": "10 хв"},
-    ]
-
     context = {
         "user_info": user_info,
-        "statistics": statistics,
-        "activity_history": activity_history,
+        "statistics": build_statistics(sessions),
+        "activity_history": build_activity_history(sessions),
     }
     return render(request, "users/profile.html", context)
+
+
+@login_required
+def edit_profile(request):
+    form = ProfileForm(request.POST or None, instance=request.user)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("profile")
+
+    return render(request, "users/edit_profile.html", {"form": form})
+
+
+def build_statistics(sessions):
+    total_clicks = sum(int(session.get("click_count") or 0) for session in sessions)
+    completed_sessions = len(sessions)
+    if completed_sessions:
+        average_clicks = round(total_clicks / completed_sessions)
+        moments = [
+            session.get("created_at")
+            for session in sessions
+            if session.get("created_at")
+        ]
+        last_moment = max(moments) if moments else None
+        last_activity = format_moment(last_moment)
+    else:
+        average_clicks = 0
+        last_activity = "—"
+
+    return {
+        "total_clicks": total_clicks,
+        "completed_sessions": completed_sessions,
+        "average_clicks_per_session": average_clicks,
+        "last_activity": last_activity,
+    }
+
+
+def build_activity_history(sessions):
+    history = []
+    for session in sessions:
+        history.append(
+            {
+                "date": format_moment(session.get("created_at")),
+                "clicks": int(session.get("click_count") or 0),
+                "duration": f"{int(session.get('duration_minutes') or 0)} хв",
+            }
+        )
+    return history
+
+
+def format_moment(value):
+    if not isinstance(value, datetime):
+        return "—"
+    if timezone.is_naive(value):
+        value = timezone.make_aware(value, timezone.utc)
+    return timezone.localtime(value).strftime("%d.%m.%Y %H:%M")

@@ -1,0 +1,22 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Редагування профілю — Anti-Stress Clicker{% endblock %}
+
+{% block content %}
+<section class="card auth-card">
+    <h1>Редагувати профіль</h1>
+    <form class="auth-form" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}
+                    <p class="form-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <button class="button" type="submit">Зберегти</button>
+    </form>
+</section>
+{% endblock %}
